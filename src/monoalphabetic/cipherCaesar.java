@@ -1,8 +1,8 @@
-package caesar;
+package monoalphabetic;
 
 import crypto.cryptoUtils;
 
-public class caesarCipher{
+public class cipherCaesar{
 	
 	static private int MAJCONST = 65;
 	static private int MINCONST = 97;

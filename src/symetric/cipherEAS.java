@@ -1,5 +1,10 @@
 package symetric;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -10,6 +15,8 @@ import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
@@ -19,14 +26,15 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class cipherEAS {
 	
+	//https://www.programcreek.com/java-api-examples/index.php?source_dir=BigSecret-master/Cipher/src/edu/utdallas/bigsecret/cipher/AesCtr.java#
+	
 	static byte[] keyBytes = new byte[] {0x2F, 0x11, 0x1D, 0x00, 0x14, 0x0E, 0x14, 0x07,0x18, 0x19, 0x0A, 0x0F, 0x1C, 0x11, 0x3A, 0x1F};
 	
 	static byte[] plainText1 = new byte[] {0x30, 0x01, 0x05, 0x3A, 0x00, 0x28, 0x45, 0x2F, 0x1C, 0x6A, 0x4B, 0x05, 0x30, 0x20, 0x19, 0x0A};
 	static byte[] plainText2 = new byte[] {0x30, 0x01, 0x05, 0x3A, 0x00, 0x28, 0x45, 0x2F};
 	static byte[] plainText3 = new byte[] {0x30, 0x01, 0x05, 0x3A, 0x00, 0x28, 0x45, 0x2F, 0x1C, 0x6A, 0x4B, 0x05, 0x30, 0x20, 0x19, 0x0A, (byte)0xCB, (byte)0x89, 0x1B, (byte)0xE5, (byte)0xFF, 0x10, 0x30, 0x4A};
 	static byte[] plainTextBT = new byte[]{0x42, 0x75, 0x73, 0x69, 0x6e, 0x65, 0x73, 0x73, 0x20, 0x54, 0x6f, 0x75, 0x72, 0x20, 0x4d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x20, 0x3a, 0x20, 0x4d, 0x6f, 0x6e, 0x6e, 0x79};
-	
-	
+
 	public enum AESmode {ECB, CBC, CTR};
 
 	
@@ -149,9 +157,46 @@ public class cipherEAS {
 		}
 	}
     
+    public static void encryptFileAES(String fileName) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, generateKeyAES(false));
+        FileOutputStream fileOutput = new FileOutputStream(fileName);
+        CipherOutputStream cipherOutput = new CipherOutputStream(fileOutput, cipher);
+        
+        try {
+			cipherOutput.write("[Hello:Okay]\nOkay".getBytes());
+        	//cipherOutput.write(fileInput.read());
+			cipherOutput.flush();
+        	cipherOutput.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public static void decryptFileAES(String fileName) throws Exception{
+    	Cipher decipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+    	decipher.init(Cipher.DECRYPT_MODE, generateKeyAES(false));
+        FileInputStream fileInput = new FileInputStream(fileName);
+        CipherInputStream cipherInput = new CipherInputStream(fileInput,decipher);
+        
+        ByteArrayOutputStream byteArrayOutput = new ByteArrayOutputStream();
+        byte[] byteArray = new byte[1024];
+        int numberOfBytedRead;
+        while ((numberOfBytedRead = cipherInput.read(byteArray)) >= 0) {
+        	byteArrayOutput.write(byteArray, 0, numberOfBytedRead);
+        }
+        System.out.println(new String(byteArrayOutput.toByteArray()));
+    }
+    
 	public static void main (String[] args){
 		rawBytesEncryptionDecryption(plainTextBT);
-		
+		try {
+			encryptFileAES("test.txt");
+			decryptFileAES("test.txt");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+			
 
 }
