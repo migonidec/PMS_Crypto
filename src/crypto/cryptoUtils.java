@@ -11,6 +11,11 @@ public class cryptoUtils {
 	public static Character[] alphabetRanked = {'e', 'a', 'i', 's', 'n', 'r', 't', 'o', 'l', 'u', 'd', 'c', 'm', 'p', 'g', 'b', 'v', 'h', 'f', 'q', 'y', 'x', 'j', 'k', 'w', 'z'};
 	public static String[] bigramRanked = {"es", "de", "le", "en", "re"};
 	
+	/**
+	 * Count the occurrence of alphabet item variable inside a text
+	 * @param text 
+	 * @return a map of all the letters (ranked in the order of alphabet) and the number of occurrence
+	 */
 	public static Map<String, Integer> letterFreq(String text){
 		Map<String, Integer> letterFreq = new LinkedHashMap<>(); 
 		for(int i=0; i<alphabet.length; i++) letterFreq.put(alphabet[i].toString(), 0);
@@ -25,6 +30,11 @@ public class cryptoUtils {
 		return letterFreq;
 	}
 	
+	/**
+	 * Gives the letter that appears the most inside a text
+	 * @param text
+	 * @return the most frequent letter
+	 */
 	public static String highestLetterFreq(String text) {
 		Map<String, Integer> letterFreq = letterFreq(text);
 		int maxFreq = 0;
@@ -119,8 +129,15 @@ public class cryptoUtils {
 	}
 	
 	public static String bytesToHex(byte[] input) {
+		String bytesToHex = "";
+		for(int i=0; i<input.length; i++) {
+			bytesToHex =  bytesToHex + String.format("%x", input[i]);
+		}
 		return Hex.encodeHexString(input);
 	}
+	
+	
+	
 	
 	/*
 	public static void mostLonelyLetter(String text) {
