@@ -17,10 +17,9 @@ public class User {
 
 	private String name; 
 	private String password; 
-	public KeyPair keyPair;
-	public SecretKeySpec keySym;
+	private KeyPair keyPair;
+	private SecretKeySpec keySym;
 	public Map<String, PublicKey> keySet = new LinkedHashMap<>(); 
-	public byte[] encryptedKeySym;
 	
 	public User(String name, String password) {
 		this.name = name;
@@ -34,15 +33,17 @@ public class User {
 	}
 	
 	public PublicKey sendPublicKey() {
+		System.out.println(this.name + " public key (hash) seen from " + this.name + " : " + this.keyPair.getPublic().hashCode());
 		return this.keyPair.getPublic();
 	}
 	
 	public void receivePublicKey(String name, PublicKey publicKey) {
+		System.out.println(name +  " public key (hash) seen from " + this.name + " : " + publicKey.hashCode());
 		this.keySet.put(name, publicKey);
 	}
 	
 	public void generateSymetricKey() {
-		try { this.keySym = CipherAES.generateKeyPwdAES(this.password); } 
+		try { this.keySym = CipherAES.generateKeyPwdAES(this.password); System.out.println("keySym (hash) : " + this.keySym.hashCode());} 
 		catch (NoSuchAlgorithmException e) { e.printStackTrace();}
 	}
 	
@@ -51,6 +52,7 @@ public class User {
 		if(this.keySet.containsKey(user.getName())) {
 			try {
 				byte[]encryptedSymKey = CipherRSA.encryptRSA(keySymBytes, this.keySet.get(user.getName()));
+				System.out.println("encryptedSymKey (hash : " + encryptedSymKey.hashCode());
 				return encryptedSymKey;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -63,6 +65,7 @@ public class User {
 		try {
 			byte[] keySymBytes = CipherRSA.decryptRSA(encryptedSymKey, this.keyPair.getPrivate());
 			this.keySym = new SecretKeySpec(keySymBytes, 0, keySymBytes.length, "AES");
+			System.out.println("keySym (hash) : " + this.keySym.hashCode());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

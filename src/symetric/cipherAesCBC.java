@@ -21,7 +21,6 @@ public class CipherAesCBC {
 		byte[] ivBytes = new byte[ivByteSize];
 		(new SecureRandom()).nextBytes(ivBytes);
 		IvParameterSpec iv = new IvParameterSpec(ivBytes);
-		System.out.println("ivBytes : " + Arrays.toString(ivBytes));
 		// Encrypt
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		cipher.init(Cipher.ENCRYPT_MODE, sKeySpec, iv);
@@ -39,7 +38,6 @@ public class CipherAesCBC {
 		int ivByteSize = 16;
 		byte[] ivBytes = new byte[ivByteSize];
 		System.arraycopy(encryptedDataBytes, 0, ivBytes, 0, ivBytes.length);
-		System.out.println("ivBytes : " +  Arrays.toString(ivBytes));
 		IvParameterSpec ivParameterSpec = new IvParameterSpec(ivBytes);
 
 		// Extract encrypted part (without IV)
