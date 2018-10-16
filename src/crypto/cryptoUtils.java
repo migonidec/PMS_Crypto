@@ -30,11 +30,6 @@ public class cryptoUtils {
 		return letterFreq;
 	}
 	
-	/**
-	 * Gives the letter that appears the most inside a text
-	 * @param text
-	 * @return the most frequent letter
-	 */
 	public static String highestLetterFreq(String text) {
 		Map<String, Integer> letterFreq = letterFreq(text);
 		int maxFreq = 0;
