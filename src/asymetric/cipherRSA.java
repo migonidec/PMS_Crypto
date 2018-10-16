@@ -26,18 +26,18 @@ public class cipherRSA {
         return keyPairGenerator.genKeyPair();
     }
     
-    public static byte[] encryptRSA(byte[] plainData, PrivateKey privateKey) throws Exception {
+    public static byte[] encryptRSA(byte[] plainData, PublicKey publicKey) throws Exception {
     	byte[] encryptedDataBytes;
     	Cipher cipher = Cipher.getInstance("RSA");
-    	cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+    	cipher.init(Cipher.ENCRYPT_MODE, publicKey);
     	encryptedDataBytes = cipher.doFinal(plainData);
     	return encryptedDataBytes;
     }
     
-    public static byte[] decryptRSA(byte[] encrypteData, PublicKey publicKey) throws Exception {
+    public static byte[] decryptRSA(byte[] encrypteData, PrivateKey privateKey) throws Exception {
     	byte[] decryptedDataBytes;
     	Cipher decipher = Cipher.getInstance("RSA");
-    	decipher.init(Cipher.DECRYPT_MODE, publicKey);
+    	decipher.init(Cipher.DECRYPT_MODE, privateKey);
     	decryptedDataBytes = decipher.doFinal(encrypteData);
     	return decryptedDataBytes;
     }
@@ -49,11 +49,11 @@ public class cipherRSA {
 		System.out.println("\n=== Plain Text ===\n" + "[ascii]: " + new String(input) + "\n [hex] : " + Arrays.toString(input));
 		try {
 			System.out.println("\n=== Text Encryption ===");
-			byte[] cipherData = encryptRSA(input, keyPair.getPrivate());
+			byte[] cipherData = encryptRSA(input, keyPair.getPublic());
 			System.out.println("[ascii]: " + new String(cipherData) + "\n [hex] : " + Arrays.toString(cipherData));
 			try {
 				System.out.println("\n=== Text Decryption ===");
-				byte[] decodeCipherData = decryptRSA(cipherData, keyPair.getPublic());
+				byte[] decodeCipherData = decryptRSA(cipherData, keyPair.getPrivate());
 				System.out.println("[ascii]: " + new String(decodeCipherData) + "\n [hex] : " + Arrays.toString(decodeCipherData));
 
 			} catch (Exception e) {
