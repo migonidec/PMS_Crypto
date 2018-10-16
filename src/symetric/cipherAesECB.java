@@ -9,7 +9,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-public class cipherAesECB {
+public class CipherAesECB {
 
 	public static byte[] encryptAesECB(byte[] plainTextBytes, SecretKeySpec sKeySpec) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
 		byte[] encryptedTextBytes;

@@ -13,11 +13,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 
 
-public class cipherRSA {
+public class CipherRSA {
 	
 	static byte[] plainTextBT = new byte[]{0x42, 0x75, 0x73, 0x69, 0x6e, 0x65, 0x73, 0x73, 0x20, 0x54, 0x6f, 0x75, 0x72, 0x20, 0x4d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x20, 0x3a, 0x20, 0x4d, 0x6f, 0x6e, 0x6e, 0x79};
-	
-
 	
     public static KeyPair generateKeyPairRSA() throws NoSuchAlgorithmException {
         final int keySize = 2048;
@@ -45,8 +43,8 @@ public class cipherRSA {
     public static void rawBytesEncryptionDecryption(byte[] input) throws Exception {
     	KeyPair keyPair = generateKeyPairRSA();
 		System.out.println("=== Private Key ===\n" + keyPair.getPrivate().getClass());
-		System.out.println("=== Public Key ===\n " + keyPair.getPublic().getClass());
-		System.out.println("\n=== Plain Text ===\n" + "[ascii]: " + new String(input) + "\n [hex] : " + Arrays.toString(input));
+		System.out.println("=== Public Key ===\n " + keyPair.getPublic());
+		//System.out.println("\n=== Plain Text ===\n" + "[ascii]: " + new String(input) + "\n [hex] : " + Arrays.toString(input));
 		try {
 			System.out.println("\n=== Text Encryption ===");
 			byte[] cipherData = encryptRSA(input, keyPair.getPublic());

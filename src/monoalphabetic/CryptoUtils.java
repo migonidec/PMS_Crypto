@@ -1,11 +1,11 @@
-package crypto;
+package monoalphabetic;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.codec.*;
 import org.apache.commons.codec.binary.Hex;
 
-public class cryptoUtils {
+public class CryptoUtils {
 	
 	private static Character[] alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 	public static Character[] alphabetRanked = {'e', 'a', 'i', 's', 'n', 'r', 't', 'o', 'l', 'u', 'd', 'c', 'm', 'p', 'g', 'b', 'v', 'h', 'f', 'q', 'y', 'x', 'j', 'k', 'w', 'z'};

@@ -13,7 +13,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class cipherAesCBC {
+public class CipherAesCBC {
 
 	public static byte[] encryptAesCBC(byte[] plainTextBytes, SecretKeySpec sKeySpec) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
 		// Generating IV.

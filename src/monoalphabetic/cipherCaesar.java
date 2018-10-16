@@ -1,8 +1,6 @@
 package monoalphabetic;
 
-import crypto.cryptoUtils;
-
-public class cipherCaesar{
+public class CipherCaesar{
 	
 	static private int MAJCONST = 65;
 	static private int MINCONST = 97;
@@ -10,7 +8,7 @@ public class cipherCaesar{
 	static private String cipher = "atgdxstugpcrtthiateajhejxhhpciegxcrtstatjgdetxacpedxcistbxcthsdgrdbbtatgdxsthepvcthdckdxhxcbpxhxapeajhstgxrwthhthfjtajxepgrtfjxaathixgtstapkpcxitsththhjytiheajhxctejxhpqatfjtathbxcthdcajxpkjtcigtegtcsgtdjhdjitcxgstvgpcsthvitggthcpnpcispjigthudcshfjtsthixigthswdcctjgpktcsgttiepgjcegdsxvïstadgvitxawjbpxchthigdjethhtigdjkpxtciepntthhtheaprthbjcxthtihthuadiithtfjxetth";
 		
 	private static int caesarShift(String text) {
-		int maxLetter = cryptoUtils.highestLetterFreq(text).charAt(0);
+		int maxLetter = CryptoUtils.highestLetterFreq(text).charAt(0);
 		return (maxLetter-4);
 	}
 	

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class hashShaFile {
+public class HashShaFile {
 
 	public static String calculateSHAfile(String fileName) throws NoSuchAlgorithmException, IOException {
 

@@ -8,11 +8,11 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 
-public class cipherAesFile {
+public class CipherAesFile {
 	
 	public static void encryptFileAES(String fileName) throws Exception {
 		Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-		cipher.init(Cipher.ENCRYPT_MODE, cipherAES.generateKeyAES(false));
+		cipher.init(Cipher.ENCRYPT_MODE, CipherAES.generateKeyAES(false));
 		FileOutputStream fileOutput = new FileOutputStream(fileName);
 		CipherOutputStream cipherOutput = new CipherOutputStream(fileOutput, cipher);
 
@@ -28,7 +28,7 @@ public class cipherAesFile {
 	
 	public static void decryptFileAES(String fileName) throws Exception{
 		Cipher decipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-		decipher.init(Cipher.DECRYPT_MODE, cipherAES.generateKeyAES(false));
+		decipher.init(Cipher.DECRYPT_MODE, CipherAES.generateKeyAES(false));
 		FileInputStream fileInput = new FileInputStream(fileName);
 		CipherInputStream cipherInput = new CipherInputStream(fileInput,decipher);
 		

@@ -1,30 +1,11 @@
 package symetric;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.Base64;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class cipherAES {
+public class CipherAES {
 	
 	//https://www.programcreek.com/java-api-examples/index.php?source_dir=BigSecret-master/Cipher/src/edu/utdallas/bigsecret/cipher/AesCtr.java#
 	
@@ -37,6 +18,10 @@ public class cipherAES {
 
 	public enum AESmode {ECB, CBC, CTR};
 
+	public static SecretKeySpec generateKeyPwdAES(String pwd) throws NoSuchAlgorithmException {
+		System.arraycopy(pwd.getBytes(), 0, keyBytes, pwd.getBytes().length, pwd.getBytes().length);
+		return generateKeyAES(false);
+	}
 	
 	public static SecretKeySpec generateKeyAES(boolean random) throws NoSuchAlgorithmException {
 		if(random == false) return (new SecretKeySpec(keyBytes, "AES"));
@@ -44,17 +29,15 @@ public class cipherAES {
 	}
 	
 
-	public static byte[] encryptAES(byte[] plainTextBytes, boolean randomKey, AESmode mode) throws Exception {
-		// Generating key.
-		SecretKeySpec sKeySpec = generateKeyAES(randomKey);
+	public static byte[] encryptAES(byte[] plainTextBytes, SecretKeySpec sKeySpec, AESmode mode) throws Exception {
 
 		// Encrypt
 		try {
 			switch (mode) {
 				case ECB:
-					return cipherAesECB.encryptAesECB(plainTextBytes, sKeySpec);
+					return CipherAesECB.encryptAesECB(plainTextBytes, sKeySpec);
 				case CBC: 
-					return cipherAesCBC.encryptAesCBC(plainTextBytes, sKeySpec);
+					return CipherAesCBC.encryptAesCBC(plainTextBytes, sKeySpec);
 				default:
 					break;
 			}
@@ -69,9 +52,9 @@ public class cipherAES {
 		try {
 			switch (mode) {
 			case ECB:
-				return cipherAesECB.decryptAesECB(encryptedDataBytes, sKeySpec);
+				return CipherAesECB.decryptAesECB(encryptedDataBytes, sKeySpec);
 			case CBC:
-				return cipherAesCBC.decryptAesCBC(encryptedDataBytes, sKeySpec);
+				return CipherAesCBC.decryptAesCBC(encryptedDataBytes, sKeySpec);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,20 +63,23 @@ public class cipherAES {
 		return null;
 	}
 
-	public static void rawBytesEncryptionDecryption(byte[] input) {
+	public static void rawBytesEncryptionDecryption(byte[] input) throws Exception {
 		AESmode mode = AESmode.CBC;
+		
+		//SecretKeySpec sKeySpec = generateKeyAES(false);
+		SecretKeySpec sKeySpec = generateKeyPwdAES("Adrien");
 		
 		System.out.println("=== Plain Text ===");
 		System.out.println("[ascii]: " + new String(input));
 		System.out.println(" [hex] : " + Arrays.toString(input));
 		try {
 			System.out.println("\n=== Text Encryption ===");
-			byte[] cipherData = encryptAES(input, false, mode);
+			byte[] cipherData = encryptAES(input, sKeySpec, mode);
 			System.out.println("[ascii]: " + new String(cipherData));
 			System.out.println(" [hex] : " + Arrays.toString(cipherData));
 			try {
 				System.out.println("\n=== Text Decryption ===");
-				byte[] decodeCipherData = decryptAES(cipherData, generateKeyAES(false), mode);
+				byte[] decodeCipherData = decryptAES(cipherData, sKeySpec, mode);
 				System.out.println("[ascii]: " + new String(decodeCipherData));
 				System.out.println(" [hex] : " + Arrays.toString(decodeCipherData));
 			} catch (Exception e) {
@@ -107,8 +93,8 @@ public class cipherAES {
 	public static void fileEncryptionDecryption(String fileName) {
 		System.out.println("\n=== File Encrypt/Decrypt ===");
 		try {
-			cipherAesFile.encryptFileAES(fileName);
-			cipherAesFile.decryptFileAES(fileName);
+			CipherAesFile.encryptFileAES(fileName);
+			CipherAesFile.decryptFileAES(fileName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -117,8 +103,12 @@ public class cipherAES {
 	
 	
 	public static void main (String[] args){
-		rawBytesEncryptionDecryption(plainTextBT);
-		fileEncryptionDecryption("test.txt");
+		try {
+			rawBytesEncryptionDecryption(plainTextBT);
+			fileEncryptionDecryption("test.txt");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 			
 
