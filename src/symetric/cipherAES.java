@@ -19,10 +19,17 @@ public class CipherAES {
 	public enum AESmode {ECB, CBC, CTR};
 
 	public static SecretKeySpec generateKeyPwdAES(String pwd) throws NoSuchAlgorithmException {
+		if(pwd.getBytes().length > 16) return null;
 		System.arraycopy(pwd.getBytes(), 0, keyBytes, pwd.getBytes().length, pwd.getBytes().length);
 		return generateKeyAES(false);
 	}
 	
+	/**
+	 * Generates either a randoms AES key or a password based AES key
+	 * @param random Is the symetric key random or based on a password ? 
+	 * @return The secret key
+	 * @throws NoSuchAlgorithmException
+	 */
 	public static SecretKeySpec generateKeyAES(boolean random) throws NoSuchAlgorithmException {
 		if(random == false) return (new SecretKeySpec(keyBytes, "AES"));
 		else return (SecretKeySpec) KeyGenerator.getInstance("AES").generateKey();
@@ -103,6 +110,7 @@ public class CipherAES {
 	
 	
 	public static void main (String[] args){
+		System.out.println(keyBytes.length);
 		try {
 			rawBytesEncryptionDecryption(plainTextBT);
 			fileEncryptionDecryption("test.txt");

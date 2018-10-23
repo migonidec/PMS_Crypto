@@ -10,12 +10,7 @@ public class CryptoUtils {
 	private static Character[] alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 	public static Character[] alphabetRanked = {'e', 'a', 'i', 's', 'n', 'r', 't', 'o', 'l', 'u', 'd', 'c', 'm', 'p', 'g', 'b', 'v', 'h', 'f', 'q', 'y', 'x', 'j', 'k', 'w', 'z'};
 	public static String[] bigramRanked = {"es", "de", "le", "en", "re"};
-	
-	/**
-	 * Count the occurrence of alphabet item variable inside a text
-	 * @param text 
-	 * @return a map of all the letters (ranked in the order of alphabet) and the number of occurrence
-	 */
+
 	public static Map<String, Integer> letterFreq(String text){
 		Map<String, Integer> letterFreq = new LinkedHashMap<>(); 
 		for(int i=0; i<alphabet.length; i++) letterFreq.put(alphabet[i].toString(), 0);
@@ -130,6 +125,7 @@ public class CryptoUtils {
 		}
 		return Hex.encodeHexString(input);
 	}
+	
 	
 	
 	

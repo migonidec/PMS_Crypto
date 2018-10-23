@@ -17,6 +17,11 @@ public class CipherRSA {
 	
 	static byte[] plainTextBT = new byte[]{0x42, 0x75, 0x73, 0x69, 0x6e, 0x65, 0x73, 0x73, 0x20, 0x54, 0x6f, 0x75, 0x72, 0x20, 0x4d, 0x61, 0x73, 0x74, 0x65, 0x72, 0x20, 0x3a, 0x20, 0x4d, 0x6f, 0x6e, 0x6e, 0x79};
 	
+	/**
+	 * Generate an random 2048 bytes long RSA pair of keys
+	 * @return the key pair (public and private)
+	 * @throws NoSuchAlgorithmException
+	 */
     public static KeyPair generateKeyPairRSA() throws NoSuchAlgorithmException {
         final int keySize = 2048;
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -24,6 +29,13 @@ public class CipherRSA {
         return keyPairGenerator.genKeyPair();
     }
     
+    /**
+     * Encrypts bytes data with a RSA public Key    
+     * @param plainData 
+     * @param publicKey 
+     * @return a byte array with the encrypted data
+     * @throws Exception
+     */
     public static byte[] encryptRSA(byte[] plainData, PublicKey publicKey) throws Exception {
     	byte[] encryptedDataBytes;
     	Cipher cipher = Cipher.getInstance("RSA");

@@ -37,6 +37,11 @@ public class CipherCaesar{
 	
 	
 	public static void main (String[] args){
+		System.out.println(CryptoUtils.letterFreqRanked(("AEDGQQUNEFUXMMDFQNGREQXYGPQYGYQEQEGBAGMZXUEGDXZOPQDF").toLowerCase()));
+		//System.out.println(CryptoUtils.bigramFreqRanked(("ZEOVUZDWIWCVUELDWCHOZLJYRUZUVCPYKUZUVWZWCVKBWCKEJJWKVUHWCWVXJEDOUVDWCVYRZWYOTDWREJDDVYUZZC").toLowerCase()));
+
+		//System.out.println(CryptoUtils.letterFreqRanked(("L OUTIL DE GESTION DES VULNRABILITS FACILITE LES TCHES CORRECTIVES ET PRODUIT DES TABLEAUX DE BORDDTAILLS").toLowerCase()));
+		System.out.println();
 		System.out.println(caesarDeCypher(cipher, caesarShift(cipher)));
 	}
 
