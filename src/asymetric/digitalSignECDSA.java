@@ -1,9 +1,7 @@
 package asymetric;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -12,12 +10,9 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.Signature;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.codec.binary.StringUtils;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -61,15 +56,21 @@ public class DigitalSignECDSA {
 		return keyFactory.generatePublic(new X509EncodedKeySpec(publicKeyBytes));
 	}
 	
+	public static PrivateKey readPrivateKey(String fileName) throws Exception {
+		byte[] privateKeyByte = readBytesFromFile(fileName);
+		KeyFactory keyFactory = KeyFactory.getInstance("ECDSA", "BC");
+		return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKeyByte));
+	}
 	
-	public static byte[] generateSignatureText(byte[] plainData, PrivateKey privateKey) throws Exception {
+	
+	public static byte[] generateSignature(byte[] plainData, PrivateKey privateKey) throws Exception {
 		Signature sigatureECDSA = Signature.getInstance("SHA256withECDSA", "BC"); //BC for BouncyCastle Provider
 		sigatureECDSA.initSign(privateKey);
 		sigatureECDSA.update(plainData);
 		return sigatureECDSA.sign();
 	}
 	
-	public static boolean validateSignatureText(byte[] plainData, PublicKey publicKey, byte[] signature) throws Exception{
+	public static boolean validateSignature(byte[] plainData, PublicKey publicKey, byte[] signature) throws Exception{
 		Signature sigatureECDSA = Signature.getInstance("SHA256withECDSA", "BC");
 		sigatureECDSA.initVerify(publicKey);
 		sigatureECDSA.update(plainData);
@@ -82,22 +83,7 @@ public class DigitalSignECDSA {
 		privateFileOutput.close();
 	}
 	
-	public static byte[] generateSignatureFile(String fileName, PrivateKey privateKey) throws Exception {
-		Signature sigatureECDSA = Signature.getInstance("SHA256withECDSA", "BC"); //BC for BouncyCastle Provider
-		sigatureECDSA.initSign(privateKey);
-		sigatureECDSA.update(readBytesFromFile(fileName));
-		return sigatureECDSA.sign(); 
-		
-	}
-	
-	public static boolean validateSignatureFile(String fileName, PublicKey publicKey, byte[] signature) throws Exception{
-		Signature sigatureECDSA = Signature.getInstance("SHA256withECDSA", "BC");
-		sigatureECDSA.initVerify(publicKey);
-		sigatureECDSA.update(readBytesFromFile(fileName));
-		return sigatureECDSA.verify(signature);
-	}
-	
-	
+
 	
 
 	public static void main (String[] args) throws Exception{
@@ -110,13 +96,14 @@ public class DigitalSignECDSA {
 		writeKeys(keyPair);
 		
 		System.out.println("=== Generates test file signature ===");
-		byte[] signature = generateSignatureFile("test.txt", keyPair.getPrivate());
-		
+		//byte[] signature = generateSignatureFile("test.txt", keyPair.getPrivate());
+		byte[] signature = generateSignature(readBytesFromFile("test.txt"), readPrivateKey("private.key"));
+
 		System.out.println("=== Writes signature on HDD ===");
 		writeSignature(signature);
 				
 		System.out.println("=== Tests the file signature ===");
-		boolean isValidated = validateSignatureFile("test.txt", readPublicKey("public.key"), signature);
+		boolean isValidated = validateSignature(readBytesFromFile("test.txt"), readPublicKey("public.key"), signature);
 		System.out.println("Result: " + isValidated);
 		
 	}

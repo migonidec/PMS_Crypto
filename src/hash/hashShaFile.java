@@ -33,7 +33,7 @@ public class HashShaFile {
 	
 	public static void main (String[] args){
 		try {
-			System.out.println(calculateSHAfile("test.txt"));	
+			System.out.println(calculateSHAfile("jdk-6u45-windows-x64.exe"));	
 		} catch (NoSuchAlgorithmException | IOException e) {
 			e.printStackTrace();
 		}

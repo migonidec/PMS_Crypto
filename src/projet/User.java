@@ -10,21 +10,25 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import asymetric.CipherRSA;
+import asymetric.DigitalSignECDSA;
 import symetric.CipherAES;
 import symetric.CipherAES.AESmode;
 
 public class User {
 
 	private String name; 
-	private KeyPair keyPair;
+	private KeyPair keyPairRSA;
+	private KeyPair keyPairECDSA;
 	private SecretKeySpec keySym;
-	private Map<String, PublicKey> keySet = new LinkedHashMap<>(); 
+	private Map<String, PublicKey> keySetRSA = new LinkedHashMap<>();
+	private Map<String, PublicKey> keySetECDSAS = new LinkedHashMap<>();
 	
 	public User(String name) {
 		try { 
 			this.name = name;
-			this.keyPair = CipherRSA.generateKeyPairRSA();
-		} catch (NoSuchAlgorithmException e) { e.printStackTrace();}
+			this.keyPairRSA = CipherRSA.generateKeyPairRSA();
+			this.keyPairECDSA = DigitalSignECDSA.generateKeyPair();
+		} catch (Exception e) { e.printStackTrace();}
 	}
 	
 	public String getName() {
@@ -35,27 +39,32 @@ public class User {
 	 * Sends the public Key to a specified user.
 	 * @param user the User that needs to receive the key
 	 */
-	public void sendPublicKey(User user) {
-		if(user != null) user.receivePublicKey(this.name, this.keyPair.getPublic());
+	public void sendPublicKeyRSA(User user) {
+		if(user != null) user.receivePublicKeyRSA(this.name, this.keyPairRSA.getPublic());
 	}
 	
-	public PublicKey sendPublicKey() { return this.keyPair.getPublic(); }
+	public PublicKey sendPublicKeyRSA() { return this.keyPairRSA.getPublic(); }
+	
+	public PublicKey sendPublicKeyECDSA() { return this.keyPairECDSA.getPublic(); }
 	
 	/**
 	 * Method to store another User's public key into the keySet
 	 * @param name Identity of the other user
 	 * @param publicKey Public key of the other user
 	 */
-	public void receivePublicKey(String name, PublicKey publicKey) {
-		System.out.println(name +  " public key (hash) seen from " + this.name + " : " + publicKey.hashCode());
-		this.keySet.put(name, publicKey);
+	public void receivePublicKeyRSA(String name, PublicKey publicKey) {
+		this.keySetRSA.put(name, publicKey);
+	}
+	
+	public void receivePublicKeyECDSA(String name, PublicKey publicKey) {
+		this.keySetECDSAS.put(name, publicKey);
 	}
 	
 	/**
 	 * Generates a random symetric key and stores it in the User attributes this.keySym
 	 */
 	public void generateSymetricKey() {
-		try { this.keySym = CipherAES.generateKeyAES(true); System.out.println("keySym (hash) : " + this.keySym.hashCode());} 
+		try { this.keySym = CipherAES.generateKeyAES(true);} 
 		catch (NoSuchAlgorithmException e) { e.printStackTrace();}
 	}
 	
@@ -67,10 +76,9 @@ public class User {
 	public byte[] encryptSymetricKey(User user) {
 		byte[] keySymBytes = this.keySym.getEncoded();
 		//if the specified user's Public key can be found in the keySet
-		if(this.keySet.containsKey(user.getName())) {
+		if(this.keySetRSA.containsKey(user.getName())) {
 			try {
-				byte[]encryptedSymKey = CipherRSA.encryptRSA(keySymBytes, this.keySet.get(user.getName()));
-				System.out.println("encryptedSymKey (hash) : " + encryptedSymKey.hashCode());
+				byte[]encryptedSymKey = CipherRSA.encryptRSA(keySymBytes, this.keySetRSA.get(user.getName()));
 				return encryptedSymKey;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -93,9 +101,8 @@ public class User {
 	
 	public void decryptSymetricKey(byte[] encryptedSymKey) {
 		try {
-			byte[] keySymBytes = CipherRSA.decryptRSA(encryptedSymKey, this.keyPair.getPrivate());
+			byte[] keySymBytes = CipherRSA.decryptRSA(encryptedSymKey, this.keyPairRSA.getPrivate());
 			this.keySym = new SecretKeySpec(keySymBytes, 0, keySymBytes.length, "AES");
-			System.out.println("keySym (hash) : " + this.keySym.hashCode());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -110,13 +117,37 @@ public class User {
 		}
 	}
 	
-	public void receiveCryptedData(byte[] encryptedData) {
+	public void receiveCryptedData(byte[] encryptedData, byte[] signature) {
 		try {
 			byte[] decryptedData = CipherAES.decryptAES(encryptedData, this.keySym, AESmode.CBC);
 			System.out.println(new String(decryptedData));
+			if(DigitalSignECDSA.validateSignature(decryptedData, this.keySetECDSAS.get("Bob"), signature)) {
+				System.out.println("The received data hasn't been alterated");
+			} else {
+				System.out.println("The received data has been alterated");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();	
 		}
 	}
+	
+	public void receiveCryptedData(byte[] encryptedData, String signatureFileName) {
+		try {
+			receiveCryptedData(encryptedData, DigitalSignECDSA.readBytesFromFile(signatureFileName));
+		} catch (Exception e) { e.printStackTrace(); }	
+	}
+	
+	
+	
+	public byte[] sendSignature(byte[] plainData) {
+		try {
+			return DigitalSignECDSA.generateSignature(plainData, this.keyPairECDSA.getPrivate());
+		} catch (Exception e) {
+			e.printStackTrace();	
+		}
+		return null; 
+	}
+	
+	
 	
 }
